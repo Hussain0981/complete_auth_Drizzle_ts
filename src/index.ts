@@ -1,19 +1,10 @@
-import express from "express";
-import { db } from "./db";
-import { users } from "./db/schema";
-
+import express, { urlencoded } from "express";
 const app = express();
 app.use(express.json());
+app.use(urlencoded({extended: true}))
 
-app.post("/users", async (_, res) => {
-  const allUsers = await db.select().from(users);
-  res.json(allUsers);
-});
+import userRouter from './router/user.router'
+app.use('/api/v1/users', userRouter)
 
-app.get("/users", async (req, res) => {
-  const { name, email } = req.body;
-  const newUser = await db.insert(users).values({ name, email }).returning();
-  res.status(201).json(newUser);
-});
 
-app.listen(3000, () => console.log("🚀 Server running on port 3000"));
+app.listen(3000, () => console.log("Server running on port 3000"));
